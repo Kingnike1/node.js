@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Página de Redirecionamento</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    .container {
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 24px;
+    }
+
+    a {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #ffffff;
+      color: #2575fc;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    a:hover {
+      background-color: #2575fc;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 18px;
+      }
+
+      a {
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bem-vindo! Escolha uma opção:</h1>
+    <a href="./upload/public/index.html" target="_blank" rel="noopener noreferrer">
+      Upload de Fotos
+    </a>
+  </div>
+</body>
+</html>
