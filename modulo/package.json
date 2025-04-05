@@ -1,5 +1,16 @@
 {
   "dependencies": {
+    "formidable": "^3.5.2",
     "upper-case": "^2.0.2"
-  }
+  },
+  "name": "modulo",
+  "version": "1.0.0",
+  "main": "demo_fileserver.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
