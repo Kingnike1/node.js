@@ -26,35 +26,64 @@ app.get('/vendas', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'vendas.html'));
 });
 
-// Rota API que retorna dados em JSON
 app.get('/api/vendas', (req, res) => {
-  const sql = `
-    SELECT v.idvenda, c.nome AS cliente_nome, p.nome AS produto_nome, 
-           v.valor_total, v.data
+    const sql = `
+      SELECT 
+        v.idvenda, 
+        c.nome AS cliente_nome, 
+        c.cpf AS cliente_cpf,
+        p.nome AS produto_nome, 
+        v.valor_total, 
+        v.data 
+      FROM tb_venda v
+      INNER JOIN tb_cliente c ON v.idcliente = c.idcliente
+      INNER JOIN tb_produto p ON v.idproduto = p.idproduto
+    `;
+  
+    conexao.query(sql, (erro, resultados) => {
+      if (erro) {
+        res.status(500).json({ erro: 'Erro ao buscar vendas' });
+      } else {
+        res.json(resultados);
+      }
+    });
+  });
+
+  
+  app.get('/api/tabela/:nome', (req, res) => {
+    const nomeTabela = req.params.nome;
+    
+    let sql;
+    let params = [];
+    
+    if (nomeTabela === 'tb_venda') {
+    sql = `
+    SELECT 
+    v.idvenda, 
+    c.nome AS cliente_nome, 
+    c.cpf AS cliente_cpf,
+    p.nome AS produto_nome, 
+    v.valor_total, 
+    v.data 
     FROM tb_venda v
     INNER JOIN tb_cliente c ON v.idcliente = c.idcliente
     INNER JOIN tb_produto p ON v.idproduto = p.idproduto
-  `;
-
-  conexao.query(sql, (erro, vendas) => {
-    if (erro) return res.status(500).json({ erro: "Erro ao buscar vendas." });
-    res.json(vendas);
+    `;
+  } else {
+    sql = `SELECT * FROM ??`; // Protegido contra SQL Injection
+    params = [nomeTabela];
+  }
+  
+  conexao.query(sql, params, (erro, resultados) => {
+    if (erro) {
+      console.error("Erro ao buscar tabela:", erro);
+      return res.status(500).json({ erro: "Erro ao buscar dados da tabela." });
+    }
+    
+    res.json(resultados);
   });
 });
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
-
-app.get('/api/tabela/:nome', (req, res) => {
-    const nomeTabela = req.params.nome;
-  
-    const sql = `SELECT * FROM ??`; // Evita SQL injection
-    conexao.query(sql, [nomeTabela], (erro, resultados) => {
-      if (erro) {
-        console.error("Erro ao buscar tabela:", erro);
-        return res.status(500).json({ erro: "Erro ao buscar dados da tabela." });
-      }
-      res.json(resultados);
-    });
-  });
