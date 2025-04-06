@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lista de Vendas</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f0f4ff, #ffffff);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #2c3e50;
+        font-size: 2.2rem;
+      }
+
+      table {
+        width: 90%;
+        margin: 0 auto;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      thead {
+        background-color: #3498db;
+        color: #fff;
+      }
+
+      th,
+      td {
+        padding: 14px 18px;
+        text-align: left;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #f2f8fc;
+      }
+
+      tbody tr:hover {
+        background-color: #dff0ff;
+        transition: background-color 0.3s ease;
+      }
+
+      td {
+        color: #333;
+      }
+
+      th {
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      @media (max-width: 768px) {
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+
+        thead {
+          display: none;
+        }
+
+        tbody tr {
+          margin-bottom: 15px;
+          border: 1px solid #ccc;
+          border-radius: 10px;
+          padding: 10px;
+          background-color: #fff;
+        }
+
+        td {
+          position: relative;
+          padding-left: 50%;
+          text-align: right;
+        }
+
+        td::before {
+          content: attr(data-label);
+          position: absolute;
+          left: 15px;
+          width: 45%;
+          padding-right: 10px;
+          font-weight: bold;
+          text-align: left;
+          color: #555;
+        }
+      }
+      .selector-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 30px auto;
+        gap: 10px;
+        background: #f5f5f5;
+        padding: 15px 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: fit-content;
+        font-family: Arial, sans-serif;
+      }
+
+      .selector-container label {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .selector-container select {
+        padding: 8px 12px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background-color: #fff;
+        transition: all 0.2s ease;
+      }
+
+      .selector-container select:hover {
+        border-color: #666;
+      }
+
+      .selector-container select:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="selector-container">
+        <label for="tabela-select">Escolha a tabela: </label>
+        <select id="tabela-select">
+          <option value="tb_cliente">Clientes</option>
+          <option value="tb_produto">Produtos</option>
+          <option value="tb_usuario">Usuários</option>
+          <option value="tb_venda">Vendas</option>
+        </select>
+      </div>
+      
+
+    <h1>Lista de Vendas</h1>
+    <table id="tabela-vendas">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Produto</th>
+          <th>Valor</th>
+          <th>Data</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      const tabelaHtml = document.querySelector("#tabela-vendas");
+      const tbody = tabelaHtml.querySelector("tbody");
+      const selectTabela = document.getElementById("tabela-select");
+
+      function carregarTabela(nomeTabela) {
+        fetch(`/api/tabela/${nomeTabela}`)
+          .then((res) => res.json())
+          .then((dados) => {
+            // Limpa tabela
+            tbody.innerHTML = "";
+
+            if (dados.length === 0) {
+              tabelaHtml.innerHTML =
+                "<p style='text-align:center;'>Nenhum dado encontrado.</p>";
+              return;
+            }
+
+            // Cabeçalho dinâmico
+            const colunas = Object.keys(dados[0]);
+            const thead = tabelaHtml.querySelector("thead");
+            thead.innerHTML =
+              "<tr>" + colunas.map((c) => `<th>${c}</th>`).join("") + "</tr>";
+
+            // Linhas da tabela
+            dados.forEach((linha) => {
+              const tr = document.createElement("tr");
+              colunas.forEach((c) => {
+                const td = document.createElement("td");
+                td.setAttribute("data-label", c);
+                td.textContent = linha[c];
+                tr.appendChild(td);
+              });
+              tbody.appendChild(tr);
+            });
+          })
+          .catch((erro) => {
+            console.error("Erro ao carregar dados:", erro);
+            tabelaHtml.innerHTML =
+              "<p style='text-align:center;'>Erro ao carregar dados.</p>";
+          });
+      }
+
+      // Carrega a tabela inicial (vendas)
+      carregarTabela(selectTabela.value);
+
+      // Atualiza ao trocar a seleção
+      selectTabela.addEventListener("change", () => {
+        carregarTabela(selectTabela.value);
+      });
+    </script>
+  </body>
+</html>
